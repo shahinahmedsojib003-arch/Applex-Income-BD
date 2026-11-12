@@ -1,0 +1,6 @@
+{
+  "name": "Applex Income BD",
+  "description": "Professional income and task earning platform for Bangladesh with daily tasks, referral rewards, wallet, and bKash/Nagad withdrawals.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

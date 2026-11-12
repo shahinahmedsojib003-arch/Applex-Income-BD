@@ -1,0 +1,208 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'shahinahmedsojib9@gmail.com' ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // ----------------------------------------------------
+    // User validation & access
+    // ----------------------------------------------------
+    function isValidUser(data) {
+      return data.email is string && data.email.size() <= 150 &&
+             data.displayName is string && data.displayName.size() <= 100 &&
+             (data.role in ['user', 'admin']) &&
+             data.walletBalance is number && data.walletBalance >= 0 &&
+             data.totalEarned is number && data.totalEarned >= 0 &&
+             data.status in ['active', 'banned'] &&
+             data.referralCode is string && data.referralCode.size() <= 30;
+    }
+
+    match /users/{userId} {
+      allow get: if isSignedIn() && (isOwner(userId) || isAdmin());
+      allow list: if isAdmin();
+
+      // Creation on sign up: role must be 'user', balance must be 0
+      allow create: if isSignedIn() && isOwner(userId) && isValidId(userId) &&
+        isValidUser(incoming()) &&
+        (incoming().role == 'user' || isAdmin()) &&
+        incoming().walletBalance == 0 &&
+        incoming().totalEarned == 0;
+
+      // Regular users can only update safe profile fields; Admins can update all fields including balance & status
+      allow update: if isSignedIn() && isValidId(userId) && (
+        isAdmin() ||
+        (
+          isOwner(userId) &&
+          incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'phone', 'paymentNumbers', 'lastDailyBonus', 'updatedAt']) &&
+          incoming().email == existing().email &&
+          incoming().role == existing().role &&
+          incoming().walletBalance == existing().walletBalance &&
+          incoming().totalEarned == existing().totalEarned &&
+          incoming().status == existing().status
+        )
+      );
+
+      allow delete: if isAdmin() && isValidId(userId);
+    }
+
+    // ----------------------------------------------------
+    // Admins collection
+    // ----------------------------------------------------
+    match /admins/{adminId} {
+      allow read: if isSignedIn() && (request.auth.uid == adminId || isAdmin());
+      allow write: if isAdmin() && isValidId(adminId);
+    }
+
+    // Connection test document
+    match /test/{testId} {
+      allow read: if true;
+    }
+
+    // ----------------------------------------------------
+    // Tasks collection: Publicly readable so visitors can browse tasks
+    // ----------------------------------------------------
+    function isValidTask(data) {
+      return data.title is string && data.title.size() <= 150 &&
+             data.category in ['visit', 'video', 'social', 'survey', 'app', 'daily'] &&
+             data.rewardAmount is number && data.rewardAmount > 0 &&
+             data.proofType in ['timer', 'code', 'screenshot_text', 'quiz'] &&
+             data.status in ['active', 'paused', 'completed'];
+    }
+
+    match /tasks/{taskId} {
+      // Anyone can view available tasks to earn money
+      allow get, list: if true;
+      allow create, update, delete: if isAdmin() && isValidId(taskId);
+    }
+
+    // ----------------------------------------------------
+    // Submissions collection
+    // ----------------------------------------------------
+    function isValidSubmission(data) {
+      return data.taskId is string && data.taskId.size() <= 128 &&
+             data.userId is string && data.userId.size() <= 128 &&
+             data.rewardAmount is number && data.rewardAmount > 0 &&
+             data.status in ['pending', 'approved', 'rejected'];
+    }
+
+    match /submissions/{submissionId} {
+      allow get: if isSignedIn() && isValidId(submissionId) &&
+        (resource.data.userId == request.auth.uid || isAdmin());
+      allow list: if isSignedIn() && (
+        isAdmin() ||
+        (resource.data.userId == request.auth.uid)
+      );
+
+      // User creates submission with pending status
+      allow create: if isSignedIn() && isValidId(submissionId) &&
+        isValidSubmission(incoming()) &&
+        incoming().userId == request.auth.uid &&
+        incoming().status == 'pending';
+
+      // Only admin can approve/reject and update submission
+      allow update: if isAdmin() && isValidId(submissionId);
+      allow delete: if isAdmin() && isValidId(submissionId);
+    }
+
+    // ----------------------------------------------------
+    // Withdrawals collection
+    // ----------------------------------------------------
+    function isValidWithdrawal(data) {
+      return data.userId is string && data.userId.size() <= 128 &&
+             data.paymentMethod in ['bkash', 'nagad', 'rocket', 'upay'] &&
+             data.accountNumber is string && data.accountNumber.size() >= 11 && data.accountNumber.size() <= 20 &&
+             data.amount is number && data.amount >= 20 &&
+             data.payableAmount is number && data.payableAmount > 0 &&
+             data.status in ['pending', 'approved', 'rejected'];
+    }
+
+    match /withdrawals/{withdrawalId} {
+      allow get: if isSignedIn() && isValidId(withdrawalId) &&
+        (resource.data.userId == request.auth.uid || isAdmin());
+      allow list: if isSignedIn() && (
+        isAdmin() ||
+        (resource.data.userId == request.auth.uid)
+      );
+
+      // User creates withdrawal request with pending status
+      allow create: if isSignedIn() && isValidId(withdrawalId) &&
+        isValidWithdrawal(incoming()) &&
+        incoming().userId == request.auth.uid &&
+        incoming().status == 'pending';
+
+      // Only admin can process/approve/reject withdrawals
+      allow update, delete: if isAdmin() && isValidId(withdrawalId);
+    }
+
+    // ----------------------------------------------------
+    // Transactions collection
+    // ----------------------------------------------------
+    function isValidTransaction(data) {
+      return data.userId is string && data.userId.size() <= 128 &&
+             data.type in ['task_earning', 'referral_bonus', 'withdrawal', 'withdrawal_refund', 'admin_adjustment', 'daily_bonus'] &&
+             data.amount is number &&
+             data.status in ['completed', 'pending', 'rejected'];
+    }
+
+    match /transactions/{transactionId} {
+      allow get: if isSignedIn() && isValidId(transactionId) &&
+        (resource.data.userId == request.auth.uid || isAdmin());
+      allow list: if isSignedIn() && (
+        isAdmin() ||
+        (resource.data.userId == request.auth.uid)
+      );
+
+      // Transactions are written by admin operations or backend
+      allow create, update, delete: if isAdmin() && isValidId(transactionId);
+    }
+
+    // ----------------------------------------------------
+    // Referrals collection
+    // ----------------------------------------------------
+    match /referrals/{referralId} {
+      allow get: if isSignedIn() && isValidId(referralId) &&
+        (resource.data.referrerId == request.auth.uid || resource.data.referredUserId == request.auth.uid || isAdmin());
+      allow list: if isSignedIn() && (
+        isAdmin() ||
+        (resource.data.referrerId == request.auth.uid)
+      );
+
+      // User creates referral linking on sign-up
+      allow create: if isSignedIn() && isValidId(referralId) &&
+        incoming().referredUserId == request.auth.uid;
+
+      allow update, delete: if isAdmin() && isValidId(referralId);
+    }
+  }
+}

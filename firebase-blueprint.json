@@ -1,0 +1,168 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile, balance, and referral data in Applex Income BD",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Auth UID" },
+        "email": { "type": "string", "format": "email", "description": "User email address" },
+        "displayName": { "type": "string", "maxLength": 100, "description": "User full name" },
+        "role": { "type": "string", "enum": ["user", "admin"], "description": "Access level" },
+        "walletBalance": { "type": "number", "description": "Current withdrawable balance in BDT" },
+        "totalEarned": { "type": "number", "description": "Lifetime earned BDT" },
+        "totalWithdrawn": { "type": "number", "description": "Lifetime approved withdrawn BDT" },
+        "pendingWithdrawals": { "type": "number", "description": "Total amount in pending withdrawals" },
+        "referralCode": { "type": "string", "maxLength": 20, "description": "Unique referral code" },
+        "referredBy": { "type": "string", "maxLength": 50, "description": "Referral code of inviter" },
+        "phone": { "type": "string", "maxLength": 20, "description": "Contact / Mobile number" },
+        "status": { "type": "string", "enum": ["active", "banned"], "description": "Account status" },
+        "lastDailyBonus": { "type": "string", "description": "ISO date of last claimed daily check-in" },
+        "createdAt": { "type": "string", "description": "ISO creation timestamp" },
+        "updatedAt": { "type": "string", "description": "ISO update timestamp" }
+      },
+      "required": ["email", "displayName", "role", "walletBalance", "totalEarned", "status", "referralCode"]
+    },
+    "Task": {
+      "title": "Task",
+      "description": "Earning task created by admin or system",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Task ID" },
+        "title": { "type": "string", "maxLength": 150, "description": "Task title in English" },
+        "titleBn": { "type": "string", "maxLength": 200, "description": "Task title in Bengali" },
+        "description": { "type": "string", "maxLength": 500, "description": "Instructions for user" },
+        "category": { "type": "string", "enum": ["visit", "video", "social", "survey", "app"], "description": "Task category" },
+        "rewardAmount": { "type": "number", "description": "Reward in BDT" },
+        "timeRequiredSec": { "type": "number", "description": "Time in seconds required before completing" },
+        "targetUrl": { "type": "string", "maxLength": 500, "description": "Destination link" },
+        "proofType": { "type": "string", "enum": ["timer", "code", "screenshot_text", "quiz"], "description": "Verification method" },
+        "verificationCode": { "type": "string", "maxLength": 50, "description": "Code required if proofType is code" },
+        "quizQuestion": { "type": "string", "maxLength": 200, "description": "Question if proofType is quiz" },
+        "quizAnswer": { "type": "string", "maxLength": 100, "description": "Answer key if proofType is quiz" },
+        "maxSubmissions": { "type": "number", "description": "Total submissions allowed" },
+        "completedCount": { "type": "number", "description": "Current total completed submissions" },
+        "status": { "type": "string", "enum": ["active", "paused", "completed"], "description": "Task state" },
+        "createdAt": { "type": "string", "description": "ISO timestamp" }
+      },
+      "required": ["title", "category", "rewardAmount", "proofType", "status"]
+    },
+    "Submission": {
+      "title": "Submission",
+      "description": "User completion proof of a task",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Submission ID" },
+        "taskId": { "type": "string", "description": "Reference to task" },
+        "taskTitle": { "type": "string", "maxLength": 150, "description": "Task title snapshot" },
+        "userId": { "type": "string", "description": "Submitting user UID" },
+        "userEmail": { "type": "string", "format": "email", "description": "Submitting user email" },
+        "rewardAmount": { "type": "number", "description": "Reward to credit upon approval" },
+        "proofContent": { "type": "string", "maxLength": 1000, "description": "User proof answer / text / link" },
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected"], "description": "Review status" },
+        "adminFeedback": { "type": "string", "maxLength": 300, "description": "Note from admin upon review" },
+        "submittedAt": { "type": "string", "description": "ISO timestamp" },
+        "reviewedAt": { "type": "string", "description": "ISO timestamp" }
+      },
+      "required": ["taskId", "userId", "rewardAmount", "status", "submittedAt"]
+    },
+    "Withdrawal": {
+      "title": "Withdrawal",
+      "description": "User cashout request to bKash, Nagad, Rocket, or Upay",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Withdrawal ID" },
+        "userId": { "type": "string", "description": "Requesting user UID" },
+        "userEmail": { "type": "string", "format": "email", "description": "User email" },
+        "paymentMethod": { "type": "string", "enum": ["bkash", "nagad", "rocket", "upay"], "description": "Selected MFS provider" },
+        "accountNumber": { "type": "string", "maxLength": 20, "description": "11-digit Bangladeshi mobile wallet number" },
+        "accountType": { "type": "string", "enum": ["personal", "agent"], "description": "Account category" },
+        "amount": { "type": "number", "description": "Requested withdrawal amount in BDT" },
+        "fee": { "type": "number", "description": "Processing fee in BDT" },
+        "payableAmount": { "type": "number", "description": "Net BDT to send to user" },
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected"], "description": "Request status" },
+        "transactionId": { "type": "string", "maxLength": 100, "description": "TrxID provided by admin on payout" },
+        "adminNote": { "type": "string", "maxLength": 300, "description": "Admin review remark" },
+        "requestedAt": { "type": "string", "description": "ISO timestamp" },
+        "processedAt": { "type": "string", "description": "ISO timestamp" }
+      },
+      "required": ["userId", "paymentMethod", "accountNumber", "amount", "payableAmount", "status", "requestedAt"]
+    },
+    "Transaction": {
+      "title": "Transaction",
+      "description": "Audit record of wallet balance changes",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Transaction ID" },
+        "userId": { "type": "string", "description": "Target user UID" },
+        "type": { "type": "string", "enum": ["task_earning", "referral_bonus", "withdrawal", "withdrawal_refund", "admin_adjustment", "daily_bonus"], "description": "Transaction nature" },
+        "amount": { "type": "number", "description": "Amount credited (+) or debited (-)" },
+        "balanceAfter": { "type": "number", "description": "Wallet balance after transaction" },
+        "description": { "type": "string", "maxLength": 250, "description": "Summary in English" },
+        "descriptionBn": { "type": "string", "maxLength": 300, "description": "Summary in Bengali" },
+        "status": { "type": "string", "enum": ["completed", "pending", "rejected"], "description": "Transaction state" },
+        "referenceId": { "type": "string", "maxLength": 100, "description": "Associated taskId, withdrawalId, or referralId" },
+        "createdAt": { "type": "string", "description": "ISO timestamp" }
+      },
+      "required": ["userId", "type", "amount", "balanceAfter", "status", "createdAt"]
+    },
+    "Referral": {
+      "title": "Referral",
+      "description": "Mapping of referral relationship and rewards",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Referral document ID" },
+        "referrerId": { "type": "string", "description": "UID of person who referred" },
+        "referredUserId": { "type": "string", "description": "UID of the new registered user" },
+        "referredEmail": { "type": "string", "format": "email", "description": "Email of referred user" },
+        "referredName": { "type": "string", "maxLength": 100, "description": "Name of referred user" },
+        "bonusEarned": { "type": "number", "description": "Total commission credited to referrer in BDT" },
+        "status": { "type": "string", "enum": ["registered", "active"], "description": "Referral status" },
+        "createdAt": { "type": "string", "description": "ISO timestamp" }
+      },
+      "required": ["referrerId", "referredUserId", "status", "createdAt"]
+    },
+    "Admin": {
+      "title": "Admin",
+      "description": "Designated administrator identity record",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Admin UID" },
+        "email": { "type": "string", "format": "email", "description": "Admin email" },
+        "role": { "type": "string", "enum": ["superadmin", "moderator"], "description": "Admin privileges" },
+        "createdAt": { "type": "string", "description": "Timestamp created" }
+      },
+      "required": ["uid", "email", "role"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles containing public stats, wallet balance, and referral attributes."
+    },
+    "/tasks/{taskId}": {
+      "schema": "Task",
+      "description": "Daily income tasks that users can complete."
+    },
+    "/submissions/{submissionId}": {
+      "schema": "Submission",
+      "description": "User completion proofs submitted for admin review."
+    },
+    "/withdrawals/{withdrawalId}": {
+      "schema": "Withdrawal",
+      "description": "Withdrawal requests to Bangladeshi mobile financial services."
+    },
+    "/transactions/{transactionId}": {
+      "schema": "Transaction",
+      "description": "Complete financial and balance audit ledger."
+    },
+    "/referrals/{referralId}": {
+      "schema": "Referral",
+      "description": "Records tracking referrer-referee partnerships."
+    },
+    "/admins/{adminId}": {
+      "schema": "Admin",
+      "description": "Privileged administrator documents."
+    }
+  }
+}
