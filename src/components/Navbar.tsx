@@ -38,11 +38,11 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => setActiveTab('dashboard')}
             className="flex items-center gap-3 cursor-pointer group"
           >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-green-400 p-0.5 shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
-              <div className="w-full h-full bg-emerald-950 rounded-[10px] flex items-center justify-center">
-                <Coins className="w-5 h-5 text-emerald-400" />
-              </div>
-            </div>
+            <img
+              src="/app-logo.png"
+              alt="Applex Income BD"
+              className="w-10 h-10 rounded-xl shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform object-cover border border-amber-400/50"
+            />
             <div>
               <div className="flex items-center gap-1.5">
                 <span className="font-extrabold text-lg sm:text-xl tracking-tight bg-gradient-to-r from-emerald-200 via-white to-green-300 bg-clip-text text-transparent">

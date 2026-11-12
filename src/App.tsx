@@ -14,6 +14,7 @@ import { TaskDetailModal } from './components/TaskDetailModal';
 import { WithdrawModal } from './components/WithdrawModal';
 import { PWAInstallButton } from './components/PWAInstallButton';
 import { OfflineIndicator } from './components/OfflineIndicator';
+import { SplashScreen } from './components/SplashScreen';
 import { DashboardView } from './views/DashboardView';
 import { TasksView } from './views/TasksView';
 import { WalletView } from './views/WalletView';
@@ -49,6 +50,7 @@ function MainLayout() {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
 
   // Parse URL for ?ref= query parameter on mount
   useEffect(() => {
@@ -237,6 +239,9 @@ function MainLayout() {
 
       {/* Offline Connectivity Indicator */}
       <OfflineIndicator />
+
+      {/* App Launch Splash Screen */}
+      {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
     </div>
   );
 }
