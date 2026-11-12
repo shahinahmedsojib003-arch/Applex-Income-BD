@@ -197,6 +197,17 @@ export const translations = {
     adjustReason: 'Audit Reason:',
     banUser: 'Ban User',
     unbanUser: 'Unban User',
+
+    // PWA
+    installApp: 'Install App',
+    installAppBannerTitle: 'Install Applex Income BD App',
+    installAppBannerDesc: 'Add to your home screen for faster access, instant daily tasks, and native app experience.',
+    installNow: 'Install Now',
+    installIOSGuideTitle: 'Install on iPhone / iPad',
+    installIOSStep1: 'Tap the Share button in the Safari toolbar at the bottom.',
+    installIOSStep2: 'Scroll down and tap "Add to Home Screen".',
+    installIOSStep3: 'Tap "Add" to launch Applex Income BD like a native app.',
+    offlineModeNotice: 'Offline Mode — Cached app shell is active. Reconnect for live wallet & tasks.',
   },
   bn: {
     appName: 'অ্যাপ্লেক্স ইনকাম বিডি',
@@ -394,5 +405,16 @@ export const translations = {
     adjustReason: 'অডিট কারণ:',
     banUser: 'ইউজার ব্যান করুন',
     unbanUser: 'ইউজার আনব্যান করুন',
+
+    // PWA
+    installApp: 'অ্যাপ ইনস্টল',
+    installAppBannerTitle: 'অ্যাপ্লেক্স ইনকাম বিডি অ্যাপ ইনস্টল করুন',
+    installAppBannerDesc: 'দ্রুত ব্যবহার, দৈনিক টাস্ক ও সহজ ক্যাশআউটের জন্য হোম স্ক্রিনে অ্যাপটি যুক্ত করুন।',
+    installNow: 'ইনস্টল করুন',
+    installIOSGuideTitle: 'আইফোন / আইপ্যাডে ইনস্টল করুন',
+    installIOSStep1: 'Safari ব্রাউজারের নিচে Share বাটনে ট্যাপ করুন।',
+    installIOSStep2: 'নিচে স্ক্রল করে "Add to Home Screen" সিলেক্ট করুন।',
+    installIOSStep3: 'উপরে "Add" বাটনে ট্যাপ করলেই হোম স্ক্রিনে অ্যাপ যুক্ত হবে।',
+    offlineModeNotice: 'অফলাইন মোড — ক্যাশড অ্যাপ চালু আছে। লাইভ ব্যালেন্স ও টাস্কের জন্য ইন্টারনেট সংযোগ দিন।',
   }
 };

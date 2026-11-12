@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#022c22" />
+      <stop offset="50%" stop-color="#065f46" />
+      <stop offset="100%" stop-color="#10b981" />
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fde68a" />
+      <stop offset="50%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+    <linearGradient id="ringGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#6ee7b7" stop-opacity="0.7" />
+      <stop offset="100%" stop-color="#059669" stop-opacity="0.2" />
+    </linearGradient>
+  </defs>
+
+  <!-- Full Rounded Square Background -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)" />
+
+  <!-- Subtle Outer Ring -->
+  <circle cx="256" cy="256" r="184" fill="none" stroke="url(#ringGrad)" stroke-width="10" />
+  <circle cx="256" cy="256" r="158" fill="#022c22" fill-opacity="0.45" stroke="#34d399" stroke-opacity="0.3" stroke-width="3" />
+
+  <!-- Stylized Coin / Emblem -->
+  <circle cx="256" cy="256" r="126" fill="url(#goldGrad)" />
+  <circle cx="256" cy="256" r="106" fill="#064e3b" />
+  <circle cx="256" cy="256" r="98" fill="none" stroke="#fbbf24" stroke-opacity="0.6" stroke-width="3" stroke-dasharray="10 6" />
+
+  <!-- Bold Bangladeshi Taka Symbol (৳) stylized geometric path -->
+  <g fill="#ffffff">
+    <!-- Top hook & vertical stem -->
+    <path d="M236 168 c0-16 14-28 32-28 c16 0 28 10 28 24 c0 12-9 20-20 20 c-8 0-14-5-14-12 c0-5 3-8 8-10 c-2-4-6-6-11-6 c-9 0-15 7-15 17 v105 c0 18 11 30 28 30 c17 0 28-11 28-27 c0-13-8-22-21-22 c-7 0-12 3-16 8 l-11-11 c8-9 19-14 31-14 c24 0 41 16 41 39 c0 26-21 45-49 45 c-29 0-48-19-48-49 V168z" />
+    <!-- Horizontal crossbar -->
+    <rect x="200" y="218" width="112" height="16" rx="8" fill="#fbbf24" />
+  </g>
+
+  <!-- Accent Sparkle Top-Right -->
+  <path d="M372 116 l6 16 l16 6 l-16 6 l-6 16 l-6-16 l-16-6 l16-6 z" fill="#fde68a" />
+</svg>

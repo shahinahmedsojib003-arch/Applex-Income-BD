@@ -12,6 +12,8 @@ import { AuthModal } from './components/AuthModal';
 import { DailyBonusModal } from './components/DailyBonusModal';
 import { TaskDetailModal } from './components/TaskDetailModal';
 import { WithdrawModal } from './components/WithdrawModal';
+import { PWAInstallButton } from './components/PWAInstallButton';
+import { OfflineIndicator } from './components/OfflineIndicator';
 import { DashboardView } from './views/DashboardView';
 import { TasksView } from './views/TasksView';
 import { WalletView } from './views/WalletView';
@@ -123,6 +125,7 @@ function MainLayout() {
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+        <PWAInstallButton variant="banner" />
         {activeTab === 'dashboard' && (
           <DashboardView
             tasks={tasks}
@@ -231,6 +234,9 @@ function MainLayout() {
         onClose={() => setIsWithdrawOpen(false)}
         onWithdrawSuccess={refreshUserData}
       />
+
+      {/* Offline Connectivity Indicator */}
+      <OfflineIndicator />
     </div>
   );
 }

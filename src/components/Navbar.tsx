@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
+import { PWAInstallButton } from './PWAInstallButton';
 
 interface NavbarProps {
   onOpenAuth: () => void;
@@ -151,6 +152,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </span>
               </div>
             )}
+
+            {/* In-App PWA Install Button */}
+            <PWAInstallButton variant="header" />
 
             {/* Language Switcher */}
             <button
